@@ -11,4 +11,12 @@ public class InputArgs {
         this.inputFile = inputFile;
         this.outputFile = outputFile;
     }
+
+    public String getInputFile() {
+        return inputFile;
+    }
+
+    public String getOutputFile(){
+        return outputFile;
+    }
 }

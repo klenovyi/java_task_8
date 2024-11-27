@@ -28,8 +28,8 @@ public class Window extends JFrame {
         // callback (метод который будет вызван при нажатии на кнопку Преобразовать)
         button.addActionListener(e -> {
             int[][] matrix = getTable();
-            Solution.incrementEach(matrix);
-            setTable(matrix);
+            boolean [][] resultMatrix = Solution.findSaddlePoints(matrix);
+            setTable(resultMatrix);
         });
 
         // callback (метод который будет вызван на кнопку + сверху таблицы (добавление столбца))
@@ -80,6 +80,31 @@ public class Window extends JFrame {
 
     }
 
+    private void saveMatrixInFile(){
+        String filePath = chooseFile();
+        if (filePath != null) {
+            boolean[][] matrix = getBooleanTable();
+            try {
+                Utils.writeIntMatrixToFile(filePath, matrix);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+    }
+
+    private void openMatrixFromFile(){
+        String filePath = chooseFile();
+        if (filePath != null) {
+            try {
+                int[][] matrix = Utils.readIntMatrixFromFile(filePath);
+                setTable(matrix);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
     private JMenu createFileMenu() {
         // Создание выпадающего меню
         JMenu tableMenu = new JMenu("Таблица");
@@ -90,30 +115,14 @@ public class Window extends JFrame {
         tableMenu.add(saveItem);
         // callback (метод который будет вызван при нажатии кнопки save)
         saveItem.addActionListener(arg0 -> {
-            String filePath = chooseFile();
-            if (filePath != null) {
-                int[][] matrix = getTable();
-                try {
-                    Utils.writeIntMatrixToFile(filePath, matrix);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
+            saveMatrixInFile();
         });
 
         // Пункт меню "Открыть"
         JMenuItem openItem = new JMenuItem("Открыть из файла");
         tableMenu.add(openItem);
         openItem.addActionListener(arg0 -> {
-            String filePath = chooseFile();
-            if (filePath != null) {
-                try {
-                    int[][] matrix = Utils.readIntMatrixFromFile(filePath);
-                    setTable(matrix);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
+            openMatrixFromFile();
         });
 
         // Добавление разделителя
@@ -157,10 +166,33 @@ public class Window extends JFrame {
         return matrix;
     }
 
+    public boolean[][] getBooleanTable() {
+        boolean [][] matrix = new boolean[table.getRowCount()][table.getColumnCount()];
+        for (int r = 0; r < table.getRowCount(); r++) {
+            for (int c = 0; c < table.getColumnCount(); c++) {
+                matrix[r][c] = Boolean.parseBoolean(table.getValueAt(r, c).toString());
+            }
+        }
+        return matrix;
+    }
+
+
     /*
     Устанавливает данные из массива в таблицу
      */
     public void setTable(int[][] matrix) {
+        DefaultTableModel dtm = (DefaultTableModel) table.getModel();
+        dtm.setRowCount(matrix.length);
+        dtm.setColumnCount(matrix[0].length);
+        table.setModel(dtm);
+        for (int r = 0; r < matrix.length; r++) {
+            for (int c = 0; c < matrix[0].length; c++) {
+                table.setValueAt(matrix[r][c], r, c);
+            }
+        }
+    }
+
+    public void setTable(boolean[][] matrix) {
         DefaultTableModel dtm = (DefaultTableModel) table.getModel();
         dtm.setRowCount(matrix.length);
         dtm.setColumnCount(matrix[0].length);

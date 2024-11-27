@@ -1,0 +1,1 @@
+testSolution case 2*2 with sedlo  OKtestSolution case 3*3 without sedlo OKtestSolution case 1*1 OKtestSolution case 3*3 with Sedlo OK

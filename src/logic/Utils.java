@@ -21,15 +21,18 @@ public class Utils {
         return a;
     }
 
-    public static void writeIntMatrixToFile(String fileName, int[][] matrix) throws IOException {
+    public static void writeIntMatrixToFile(String fileName, boolean[][] matrix) throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
-            for (int[] row : matrix) {
-                String[] strRow =  Arrays.stream(row)
-                        .mapToObj(String::valueOf)
-                        .toArray(String[]::new);
+            // Проходим по каждой строке матрицы
+            for (int i = 0; i < matrix.length; i++) {
+                String[] strRow = new String[matrix[i].length];
+                for (int j = 0; j < matrix[i].length; j++) {
+                    strRow[j] = String.valueOf(matrix[i][j]);
+                }
                 writer.write(String.join(" ", strRow));
-                writer.write('\n');
+                writer.write('\n');  // добавляем перевод строки
             }
+
         }
     }
 }
